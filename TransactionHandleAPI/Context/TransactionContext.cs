@@ -15,8 +15,8 @@ namespace TransactionHandleAPI.Context
 
         }
 
-        public DbSet<TransactionTest> Transactions { get; set; }
-        public DbSet<Transaction> CSVTransactions { get; set; } 
+        //public DbSet<TransactionTest> Transactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; } 
 
 
     }
