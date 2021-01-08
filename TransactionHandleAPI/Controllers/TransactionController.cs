@@ -8,9 +8,12 @@ using TransactionHandleAPI.Entities;
 using TransactionHandleAPI.Model;
 using System.IO;
 using System.Net;
+using TransactionHandleAPI.Context;
 
 namespace TransactionHandleAPI.Controllers
 {
+
+
     public static class ExtensionForService
     {
         //Представление csv файла в виде коллекции
@@ -40,6 +43,14 @@ namespace TransactionHandleAPI.Controllers
     [Route("api/[controller]")]
     public class TransactionController : ControllerBase
     {
+        private readonly TransactionContext _ctx;
+        public TransactionController(TransactionContext context)
+        {
+            _ctx = context;
+        }
+
+
+
         [HttpPost("Upload")]
         public IActionResult UploadCSV([FromBody] string path)
         {
