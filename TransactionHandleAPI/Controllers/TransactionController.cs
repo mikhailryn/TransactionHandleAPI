@@ -9,6 +9,8 @@ using TransactionHandleAPI.Model;
 using System.IO;
 using System.Net;
 using TransactionHandleAPI.Context;
+using System.Globalization;
+using TransactionHandleAPI.Services;
 
 namespace TransactionHandleAPI.Controllers
 {
@@ -21,17 +23,20 @@ namespace TransactionHandleAPI.Controllers
         {
             foreach (var line in source)
             {
-                var columns = line.Replace('$', ' ').Replace('.', ',').Split(',');
+                //var columns = line.Replace('$', ' ').Replace('.', ',').Split(',');
 
 
+                var columns = line.Replace("$", "").Split(",");
 
-                yield return new Entities.Transaction
+            
+
+                yield return new Transaction
                 {
                     TransactionId = int.Parse(columns[0]),
                     Status = columns[1],
                     Type = columns[2],
                     ClientName = columns[3],
-                    Amount = decimal.Parse(columns[4])
+                    Amount = double.Parse(columns[4], System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo)
                 };
             }
         }
@@ -44,10 +49,18 @@ namespace TransactionHandleAPI.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly TransactionContext _ctx;
-        public TransactionController(TransactionContext context)
+
+        private readonly Services.ITransactionRepository transactionRepository;
+
+
+
+
+        public TransactionController(TransactionContext context, ITransactionRepository transactionRepositroy)
         {
             _ctx = context;
+            this.transactionRepository = transactionRepository;
         }
+
 
 
 
@@ -59,6 +72,33 @@ namespace TransactionHandleAPI.Controllers
                .Skip(1)
                .Where(line => line.Length > 1)
                .ToAccountingData();
+
+
+            //transactionRepository.SaveTransaction(query);
+
+
+            foreach (var item in query)
+            {
+
+                var tr = new Transaction
+                {
+                    Amount = item.Amount,
+                    ClientName = item.ClientName,
+                    Status = item.Status,
+                    TransactionId = item.TransactionId,
+                    Type = item.Type
+                };
+
+
+
+
+
+
+                _ctx.Transactions.Add(tr);
+                
+                
+            }
+            _ctx.SaveChanges();
 
             return Ok(query.ToList());
 

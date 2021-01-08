@@ -2,7 +2,7 @@
 
 namespace TransactionHandleAPI.Migrations
 {
-    public partial class newModel : Migration
+    public partial class NewMigr : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,11 +10,10 @@ namespace TransactionHandleAPI.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    TransactionId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<int>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    ClientName = table.Column<string>(nullable: false),
+                    TransactionId = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    ClientName = table.Column<string>(nullable: true),
                     Amount = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
