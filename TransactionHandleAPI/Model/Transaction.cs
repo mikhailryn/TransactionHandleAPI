@@ -7,6 +7,19 @@ using System.Threading.Tasks;
 
 namespace TransactionHandleAPI.Entities
 {
+
+    public enum TranStatus
+    {
+        Pending,
+        Completed,
+        Cancelled
+    }
+    public enum TranType
+    {
+        Refill,
+        Withdrawal
+    }
+
     public class Transaction
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
