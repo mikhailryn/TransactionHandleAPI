@@ -11,7 +11,7 @@ namespace TransactionHandleAPI.Services
     {
         //string UploadTransaction();
 
-        void SaveTransaction(IEnumerable<Transaction> transaction);
+        //void SaveTransaction(IEnumerable<Transaction> transaction);
 
     }
 }
