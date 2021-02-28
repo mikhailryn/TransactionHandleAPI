@@ -88,18 +88,45 @@ namespace TransactionHandleAPI.Controllers
             }                
         }
 
+        [HttpGet("Get")]
+        public IActionResult ShowAllTran()
+        {
+            
+          var listOfTran = _ctx.Transactions.OrderBy(x => x.TransactionId).ToList();
+
+            return Ok(listOfTran);
+
+        }
+
+
+        //api/transaction/Edit?id=1&status=1
+        [HttpPost("Edit")]
+        public IActionResult EditTran(int id, TranStatus status)
+        {
+           var findTran = _ctx.Transactions.Where(x => x.TransactionId == id);
+
+            var z = status.ToString();
+            foreach (var item in findTran)
+            {
+                item.Status = z;
+                _ctx.Transactions.Update(item);
+            }
+
+            _ctx.SaveChanges();
+
+            return Ok();
+           
+        }
 
 
 
 
-        //Export
         //[HttpGet("Export")]
-        //public IActionResult ExportToExcel([Microsoft.AspNetCore.Mvc.FromBody] int[] parameters)
+        //public IActionResult ExportToExcel([FromBody] int[] parameters)
         //{
 
-        //    if ((int)TranStatus.Cancelled == parameters.First() || TranType.Refill == parameters.Skip(parameters.First()))
 
-        //        var query = _ctx.Transactions.Where(x => x.Status == status).ToList();
+
 
         //    return Ok(query.ToList());
 
