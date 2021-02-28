@@ -12,8 +12,8 @@ using TransactionHandleAPI.Context;
 using System.Globalization;
 using TransactionHandleAPI.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Web.Http;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
+
 
 namespace TransactionHandleAPI.Controllers
 {
@@ -48,100 +48,62 @@ namespace TransactionHandleAPI.Controllers
     {
         private readonly TransactionContext _ctx;
 
-        //private readonly Services.ITransactionRepository transactionRepository;
-
-
-
 
         public TransactionController(TransactionContext context)
         {
             _ctx = context;
-            //this.transactionRepository = transactionRepository;
         }
-
-
-
 
         [HttpPost("Upload")]
         public IActionResult UploadCSV([FromBody] string path)
         {
-            var query =
-         System.IO.File.ReadAllLines(path.Replace("/", @"\"))
-               .Skip(1)
+            var rawData =
+           System.IO.File.ReadAllLines(path.Replace("/", @"\"));
+
+            //if rawData is null or Empty
+            if (rawData== null || !rawData.Any())
+            {
+               throw new Exception("Transaction is empty");                
+            }
+            else
+            {
+              var transactions =  rawData.Skip(1)
                .Where(line => line.Length > 1)
                .ToAccountingData();
 
-
-
-
-            foreach (var item in query)
-            {
-                var dbEntry = _ctx.Transactions.FirstOrDefault(t => t.TransactionId == item.TransactionId);
-                if (dbEntry != null)
+                foreach (var item in transactions)
                 {
-                    var tr = new Transaction
+                    if (_ctx.Transactions.Contains(item))
                     {
-                        Amount = item.Amount,
-                        ClientName = item.ClientName,
-                        Status = item.Status,
-                        TransactionId = item.TransactionId,
-                        Type = item.Type
-                    };
-                    _ctx.Transactions.Remove(dbEntry);
-                    _ctx.Transactions.Add(tr);
-                }
-                else if (dbEntry == null)
-                {
-                    var tr = new Transaction
+                        _ctx.Transactions.Where(x => x.TransactionId == item.TransactionId);
+                        _ctx.Transactions.Update(item);
+                    }
+                    else
                     {
-                        Amount = item.Amount,
-                        ClientName = item.ClientName,
-                        Status = item.Status,
-                        TransactionId = item.TransactionId,
-                        Type = item.Type
-                    };
-
-                    _ctx.Transactions.Add(tr);
+                        _ctx.Transactions.Add(item);                      
+                    }
                 }
-            }
-            _ctx.SaveChanges();
-
-
-            //foreach (var item in query)
-            //{
-
-            //    var tr = new Transaction
-            //    {
-            //        Amount = item.Amount,
-            //        ClientName = item.ClientName,
-            //        Status = item.Status,
-            //        TransactionId = item.TransactionId,
-            //        Type = item.Type
-            //    };
-
-
-            //    _ctx.Transactions.Add(tr);
-
-            //}
-            //_ctx.SaveChanges();
-
-            return Ok(query.ToList());
-
+                _ctx.SaveChanges();
+                return Ok(transactions.ToList());
+            }                
         }
+
+
+
 
 
         //Export
-        [HttpGet("Export")]
-        public IActionResult ExportToExcel([Microsoft.AspNetCore.Mvc.FromBody] int[] parameters)
-        {
+        //[HttpGet("Export")]
+        //public IActionResult ExportToExcel([Microsoft.AspNetCore.Mvc.FromBody] int[] parameters)
+        //{
 
-            if ((int)TranStatus.Cancelled == parameters.First() || TranType.Refill == parameters.Skip(parameters.First()) )
+        //    if ((int)TranStatus.Cancelled == parameters.First() || TranType.Refill == parameters.Skip(parameters.First()))
 
-           var query = _ctx.Transactions.Where(x => x.Status == status).ToList();
+        //        var query = _ctx.Transactions.Where(x => x.Status == status).ToList();
 
-            return Ok(query.ToList());
+        //    return Ok(query.ToList());
 
-        }
+        //}
 
 
 
