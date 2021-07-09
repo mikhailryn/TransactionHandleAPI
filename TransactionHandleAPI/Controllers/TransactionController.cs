@@ -63,7 +63,7 @@ namespace TransactionHandleAPI.Controllers
             //if rawData is null or Empty
             if (rawData== null || !rawData.Any())
             {
-               throw new Exception("Transaction is empty");                
+               throw new Exception("Transaction is empty or null");                
             }
             else
             {
