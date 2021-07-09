@@ -137,13 +137,13 @@ namespace TransactionHandleAPI.Controllers
 
 
         [HttpGet("Delete")]
-        public IActionResult ExportToExcel([FromBody] int[] parameters)
+        public IActionResult ExportToExcel([FromBody] Transaction st)
         {
 
 
+            _ctx.Transactions.Remove(st);
 
-
-            return Ok(query.ToList());
+            return Ok();
 
         }
 
