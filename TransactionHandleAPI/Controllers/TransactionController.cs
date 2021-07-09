@@ -133,10 +133,19 @@ namespace TransactionHandleAPI.Controllers
         //}
 
 
+        ///new feature 
+
+
+        [HttpGet("Delete")]
+        public IActionResult ExportToExcel([FromBody] int[] parameters)
+        {
 
 
 
 
+            return Ok(query.ToList());
+
+        }
 
 
 
