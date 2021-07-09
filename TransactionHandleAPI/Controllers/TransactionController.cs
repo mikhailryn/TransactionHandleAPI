@@ -140,7 +140,7 @@ namespace TransactionHandleAPI.Controllers
         public IActionResult ExportToExcel([FromBody] Transaction st)
         {
 
-            //..
+            //..туц
             _ctx.Transactions.Remove(st);
 
             return Ok();
